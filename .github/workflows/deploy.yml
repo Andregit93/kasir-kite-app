@@ -43,16 +43,55 @@ jobs:
           overwrite: true
 
       # ──────────────────────────────────────────────
-      # PHASE 3: Jalankan deploy.sh di server via SSH
+      # PHASE 3: Deployment langsung via SSH
       # ──────────────────────────────────────────────
-      - name: Execute Remote Deployment Script
+      - name: Execute Remote Deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.GCP_VM_HOST }}
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
           port: 22
-          script_stop: true
+          command_timeout: 5m
           script: |
-            chmod +x /var/www/kasir-app/deploy.sh
-            /var/www/kasir-app/deploy.sh
+            set -e
+            cd /var/www/kasir-app
+
+            echo "=== MEMULAI DEPLOYMENT ==="
+
+            # 1. Maintenance mode
+            php artisan down || true
+
+            # 2. Tarik kode terbaru (force reset)
+            git fetch origin master
+            git reset --hard origin/master
+
+            # 3. Composer (production)
+            export COMPOSER_ALLOW_SUPERUSER=1
+            composer install --no-dev --optimize-autoloader --no-interaction
+
+            # 4. Migrasi database
+            php artisan migrate --force
+
+            # 5. Cache Laravel
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan event:cache
+
+            # 6. Restart Reverb jika ada
+            if sudo supervisorctl status reverb-websocket > /dev/null 2>&1; then
+              sudo supervisorctl restart reverb-websocket
+              echo "✓ Reverb WebSocket di-restart"
+            else
+              echo "⚠ Reverb belum dikonfigurasi, dilewati"
+            fi
+
+            # 7. Fix ownership
+            sudo chown -R deployer:www-data /var/www/kasir-app/public/build
+            sudo chmod -R 775 /var/www/kasir-app/public/build
+
+            # 8. Kembali online
+            php artisan up
+
+            echo "=== DEPLOYMENT BERHASIL ==="
