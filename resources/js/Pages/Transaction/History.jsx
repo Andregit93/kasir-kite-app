@@ -317,7 +317,8 @@ export default function History({ transactions: serverTransactionsResponse, filt
                             <input
                                 type="date"
                                 onChange={handleDateChange}
-                                className="bg-transparent border-none text-slate-600 text-xs focus:ring-0 font-manrope font-bold py-2 px-1"
+                                className="bg-transparent border-none text-slate-600 text-xs focus:ring-0 font-manrope font-bold py-2 px-1 min-w-[120px] h-9"
+                                style={{ colorScheme: 'light' }}
                             />
                         </div>
                     </div>
