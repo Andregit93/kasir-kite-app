@@ -312,13 +312,17 @@ export default function History({ transactions: serverTransactionsResponse, filt
                             {showVoided ? 'Sembunyikan Batal' : 'Tampilkan Batal'}
                         </button>
                         
-                        <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-2xl px-3 py-0.5 shadow-sm">
-                            <span className="text-[9px] font-manrope font-black text-slate-400 uppercase tracking-widest hidden md:inline">Cari Tanggal:</span>
+                        <div className="relative flex items-center gap-2 bg-white border border-slate-100 rounded-2xl px-3 shadow-sm cursor-pointer"
+                             onClick={() => document.getElementById('history-date-picker')?.showPicker?.() || document.getElementById('history-date-picker')?.click()}>
+                            <FontAwesomeIcon icon={faCalendarCheck} className="text-[10px] text-brand/50" />
+                            <span className="text-[10px] font-manrope font-black text-slate-500 uppercase tracking-widest py-2.5 select-none whitespace-nowrap">
+                                {filter === 'custom' ? 'Tanggal Dipilih' : 'Pilih Tanggal'}
+                            </span>
                             <input
+                                id="history-date-picker"
                                 type="date"
                                 onChange={handleDateChange}
-                                className="bg-transparent border-none text-slate-600 text-xs focus:ring-0 font-manrope font-bold py-2 px-1 min-w-[120px] h-9"
-                                style={{ colorScheme: 'light' }}
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                             />
                         </div>
                     </div>
