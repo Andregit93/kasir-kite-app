@@ -27,6 +27,14 @@ return new class extends Migration
             ->update([
                 'logo_url' => DB::raw("'/storage/' || SPLIT_PART(logo_url, '/storage/', 2)")
             ]);
+
+        // Fix photo_url di tabel users (foto kasir)
+        DB::table('users')
+            ->whereNotNull('photo_url')
+            ->where('photo_url', 'like', 'http%/storage/%')
+            ->update([
+                'photo_url' => DB::raw("'/storage/' || SPLIT_PART(photo_url, '/storage/', 2)")
+            ]);
     }
 
     /**

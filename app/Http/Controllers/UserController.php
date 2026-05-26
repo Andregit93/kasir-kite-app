@@ -57,7 +57,7 @@ class UserController extends Controller
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('store_assets/photos', 'public');
             if ($path) {
-                $photoUrl = asset('storage/' . $path);
+                $photoUrl = '/storage/' . $path;
             }
         }
 
@@ -134,7 +134,7 @@ class UserController extends Controller
             // Upload new photo
             $path = $request->file('photo')->store('store_assets/photos', 'public');
             if ($path) {
-                $validated['photo_url'] = asset('storage/' . $path);
+                $validated['photo_url'] = '/storage/' . $path;
             }
         }
 
