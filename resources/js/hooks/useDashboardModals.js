@@ -252,18 +252,50 @@ export const useDashboardModals = (showToast, categories, setCategories) => {
 
   const handleProductPhotoChange = useCallback((e) => {
     const f = e.target.files[0];
-    if (f) {
-      productForm.setData('image', f);
-      setProductPhotoPreview(URL.createObjectURL(f));
+    if (!f) return;
+
+    productForm.clearErrors('image');
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(f.type)) {
+      productForm.setError('image', 'Format foto harus berupa JPG, JPEG, PNG, atau WEBP.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
     }
+
+    if (f.size > 2 * 1024 * 1024) {
+      productForm.setError('image', 'Ukuran foto maksimal adalah 2MB.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    productForm.setData('image', f);
+    setProductPhotoPreview(URL.createObjectURL(f));
+    if (fileInputRef.current) fileInputRef.current.value = '';
   }, [productForm]);
 
   const handleCashierPhotoChange = useCallback((e) => {
     const f = e.target.files[0];
-    if (f) {
-      cashierForm.setData('photo', f);
-      setPhotoPreview(URL.createObjectURL(f));
+    if (!f) return;
+
+    cashierForm.clearErrors('photo');
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(f.type)) {
+      cashierForm.setError('photo', 'Format foto harus berupa JPG, JPEG, PNG, atau WEBP.');
+      if (photoInputRef.current) photoInputRef.current.value = '';
+      return;
     }
+
+    if (f.size > 2 * 1024 * 1024) {
+      cashierForm.setError('photo', 'Ukuran foto maksimal adalah 2MB.');
+      if (photoInputRef.current) photoInputRef.current.value = '';
+      return;
+    }
+
+    cashierForm.setData('photo', f);
+    setPhotoPreview(URL.createObjectURL(f));
+    if (photoInputRef.current) photoInputRef.current.value = '';
   }, [cashierForm]);
 
   return {

@@ -70,6 +70,7 @@ class InventoryService
 
         return $this->applyTenantScope(Product::query())
             ->where('stock', '>', 0)
+            ->where('created_at', '<', $cutoff) // Exclude newly created products
             ->whereNotExists(function ($query) use ($cutoff) {
                 $query->select(DB::raw(1))
                     ->from('transaction_items')

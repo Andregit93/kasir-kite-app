@@ -213,11 +213,11 @@ const ProductModal = ({
                 type="button"
                 disabled={isSaving}
                 onClick={() => setTrackStock(!trackStock)}
-                className={`w-9 h-5.5 rounded-full transition-colors relative focus:outline-none ${
+                className={`w-9 h-[22px] rounded-full transition-colors relative focus:outline-none ${
                   trackStock ? 'bg-blue-600' : 'bg-slate-200'
                 }`}
               >
-                <div className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full shadow-sm transition-all ${
+                <div className={`absolute top-0.5 w-[18px] h-[18px] bg-white rounded-full shadow-sm transition-all ${
                   trackStock ? 'left-4' : 'left-0.5'
                 }`} />
               </button>

@@ -255,11 +255,11 @@ export default function History({ transactions: serverTransactionsResponse, filt
                         </div>
 
                         <div className="flex items-center justify-between md:justify-end gap-2 md:gap-4 bg-white/60 backdrop-blur-md p-1.5 rounded-2xl border border-white/40 shadow-sm w-full md:w-fit">
-                            <div className="md:hidden flex items-center px-4 border-r border-slate-200 relative">
+                            <div className="md:hidden flex items-center px-3 border-r border-slate-200 relative min-w-[90px]">
                                 <select
                                     value={filter}
                                     onChange={(e) => router.get(`/pos/transactions?filter=${e.target.value}`)}
-                                    className="bg-transparent border-none focus:ring-0 text-[10px] font-black font-manrope text-brand p-0 appearance-none pr-5 z-10"
+                                    className="bg-transparent border-none focus:ring-0 text-[10px] font-black font-manrope text-brand p-0 pr-5 w-full appearance-none cursor-pointer"
                                 >
                                     <option value="daily">Hari Ini</option>
                                     <option value="monthly">Bulan</option>
@@ -267,15 +267,15 @@ export default function History({ transactions: serverTransactionsResponse, filt
                                 </select>
                                 <FontAwesomeIcon
                                     icon={faAngleDown}
-                                    className="absolute right-6 text-[10px] text-brand/60 pointer-events-none group-hover/pg:text-brand transition-colors z-20"
+                                    className="absolute right-3 text-[10px] text-brand/60 pointer-events-none"
                                 />
                             </div>
 
-                            <div className="flex items-center ml-7 md:ml-0 px-4 md:px-5 border-r border-slate-200 relative">
+                            <div className="flex items-center ml-2 md:ml-0 px-3 md:px-5 border-r border-slate-200 relative min-w-[70px]">
                                 <select
                                     value={itemsPerPage}
                                     onChange={(e) => { setItemsPerPage(e.target.value === 'all' ? 'all' : parseInt(e.target.value)); setCurrentPage(1); }}
-                                    className="bg-transparent border-none focus:ring-0 text-[10px] font-black font-manrope text-brand p-0 appearance-none pr-5 z-10"
+                                    className="bg-transparent border-none focus:ring-0 text-[10px] font-black font-manrope text-brand p-0 pr-5 w-full appearance-none cursor-pointer"
                                 >
                                     <option value={10}>10</option>
                                     <option value={25}>25</option>
@@ -284,7 +284,7 @@ export default function History({ transactions: serverTransactionsResponse, filt
                                 </select>
                                 <FontAwesomeIcon
                                     icon={faAngleDown}
-                                    className="absolute right-10 text-[10px] text-brand/60 pointer-events-none group-hover/pg:text-brand transition-colors z-20"
+                                    className="absolute right-3 text-[10px] text-brand/60 pointer-events-none"
                                 />
                             </div>
 

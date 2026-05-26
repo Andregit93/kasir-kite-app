@@ -102,10 +102,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:cashier')->prefix('pos')->group(function () {
         Route::get('/', [CashierController::class, 'index'])->name('cashier.index');
         Route::post('/checkout', [TransactionController::class, 'store'])->name('transaction.store');
-    });
-
-    // 4. SHARED (ADMIN & CASHIER)
-    Route::middleware('role:store_admin,cashier')->prefix('pos')->group(function () {
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transaction.index');
         Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])->name('transaction.void');
     });
