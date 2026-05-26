@@ -37,9 +37,9 @@ php artisan route:cache
 php artisan view:cache
 php artisan event:cache
 
-# Muat ulang proses antrean/WebSocket Reverb di Supervisor
+# Muat ulang proses antrean/WebSocket Reverb di Supervisor (jika sudah dikonfigurasi)
 echo "→ Memuat ulang server WebSocket Reverb di Supervisor..."
-sudo supervisorctl restart reverb-websocket
+sudo supervisorctl restart reverb-websocket || echo "   ⚠ Reverb belum dikonfigurasi di Supervisor, dilewati."
 
 # Matikan mode pemeliharaan (Aplikasi kembali Online)
 echo "→ Mematikan mode maintenance..."
