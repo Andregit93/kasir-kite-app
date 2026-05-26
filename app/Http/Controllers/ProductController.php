@@ -33,7 +33,7 @@ class ProductController extends Controller
         $path = $file->store('store_assets', 'public');
 
         if ($path) {
-            return asset('storage/' . $path);
+            return '/storage/' . $path;
         }
 
         return null;

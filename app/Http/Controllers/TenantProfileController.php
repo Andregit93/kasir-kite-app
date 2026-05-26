@@ -79,7 +79,7 @@ class TenantProfileController extends Controller
             // Upload new logo
             $path = $request->file('logo')->store('store_assets/logos', 'public');
             if ($path) {
-                $validated['logo_url'] = asset('storage/' . $path);
+                $validated['logo_url'] = '/storage/' . $path;
             }
         }
 

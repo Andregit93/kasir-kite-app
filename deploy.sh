@@ -18,17 +18,12 @@ php artisan down || true
 
 # Ambil pembaruan kode terbaru dari repositori Git
 echo "→ Menarik kode terbaru dari Git..."
-git pull origin main
+git pull origin master
 
 # Instal dependensi PHP produksi
 echo "→ Menginstal dependensi Composer (Production)..."
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction
-
-# Instal dependensi Node.js dan kompilasi aset frontend (Vite)
-echo "→ Menginstal paket NPM & mem-build aset produksi..."
-npm install
-npm run build
 
 # Jalankan migrasi database PostgreSQL (Supabase)
 echo "→ Menjalankan migrasi database..."
@@ -43,8 +38,6 @@ php artisan event:cache
 
 # Muat ulang proses antrean/WebSocket Reverb di Supervisor
 echo "→ Memuat ulang server WebSocket Reverb di Supervisor..."
-# Catatan Keamanan: Agar baris ini berjalan lancar di CI/CD, tambahkan izin NOPASSWD 
-# untuk perintah supervisorctl pada berkas sudoers pengguna deployer Anda.
 sudo supervisorctl restart reverb-websocket
 
 # Matikan mode pemeliharaan (Aplikasi kembali Online)

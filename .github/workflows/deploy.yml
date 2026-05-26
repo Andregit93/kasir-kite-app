@@ -6,26 +6,53 @@ on:
       - master
 
 jobs:
-  deploy:
-    name: Deploy to Production VM
+  build-and-deploy:
+    name: Build Assets & Deploy to Production
     runs-on: ubuntu-latest
     steps:
+      # ──────────────────────────────────────────────
+      # PHASE 1: Build aset frontend di GitHub Runner
+      # ──────────────────────────────────────────────
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Execute Remote Deployment Script via SSH
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Build Production Assets (Vite)
+        run: npm run build
+
+      # ──────────────────────────────────────────────
+      # PHASE 2: Upload aset hasil build ke server VM
+      # ──────────────────────────────────────────────
+      - name: Deploy Built Assets to Server via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USER }}
+          key: ${{ secrets.GCP_VM_SSH_KEY }}
+          port: 22
+          source: "public/build/*"
+          target: "/var/www/kasir-app/"
+          overwrite: true
+
+      # ──────────────────────────────────────────────
+      # PHASE 3: Jalankan deploy.sh di server via SSH
+      # ──────────────────────────────────────────────
+      - name: Execute Remote Deployment Script
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.GCP_VM_HOST }}
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_KEY }}
-          port: ${{ secrets.GCP_VM_PORT || 22 }}
-          script_stop: true # Berhenti jika ada perintah yang gagal
+          port: 22
+          script_stop: true
           script: |
-            if [ -f /var/www/kasir-app/deploy.sh ]; then
-              chmod +x /var/www/kasir-app/deploy.sh
-              /var/www/kasir-app/deploy.sh
-            else
-              echo "Error: /var/www/kasir-app/deploy.sh tidak ditemukan di server!"
-              exit 1
-            fi
+            chmod +x /var/www/kasir-app/deploy.sh
+            /var/www/kasir-app/deploy.sh
