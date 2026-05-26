@@ -18,7 +18,8 @@ php artisan down || true
 
 # Ambil pembaruan kode terbaru dari repositori Git
 echo "→ Menarik kode terbaru dari Git..."
-git pull origin master
+git fetch origin master
+git reset --hard origin/master
 
 # Instal dependensi PHP produksi
 echo "→ Menginstal dependensi Composer (Production)..."
