@@ -1,0 +1,80 @@
+# --------------------------------------------------------------------------
+# KasirKite Nginx Configuration Template (Nginx Server Block)
+# --------------------------------------------------------------------------
+# Salin file ini ke server GCP Anda di path:
+# /etc/nginx/sites-available/kasirkite.conf
+# Lalu buat symlink ke sites-enabled dan reload Nginx.
+# --------------------------------------------------------------------------
+
+# 1. HTTP Server Block (Redirect ke HTTPS)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name kasirkite.com www.kasirkite.com; # Ganti dengan domain Anda
+
+    return 301 https://$host$request_uri;
+}
+
+# 2. HTTPS Server Block (Production)
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name kasirkite.com www.kasirkite.com; # Ganti dengan domain Anda
+
+    root /var/www/kasir-app/public;
+    index index.php index.html;
+
+    # SSL Configuration (Gunakan path Certbot Let's Encrypt setelah di-generate)
+    ssl_certificate /etc/letsencrypt/live/kasirkite.com/fullchain.pem; # Ganti domain
+    ssl_certificate_key /etc/letsencrypt/live/kasirkite.com/privkey.pem; # Ganti domain
+    
+    # SSL Best Practices
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    charset utf-8;
+
+    # Header Keamanan Premium
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Akses Web Utama Laravel
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    # Penanganan File PHP via PHP-FPM
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock; # Sesuaikan versi PHP jika berbeda
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # REVERSE PROXY UNTUK WEBSOCKET LARAVEL REVERB
+    # Client akan terhubung melalui wss://domain.com/app
+    location /app {
+        proxy_pass http://127.0.0.1:8080; # Meneruskan ke port Reverb di localhost
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Port $server_port;
+    }
+
+    # Blokir akses ke file .htaccess dan file rahasia lainnya
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
