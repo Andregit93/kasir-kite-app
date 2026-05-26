@@ -26,7 +26,6 @@ export default function History({ transactions: serverTransactionsResponse, filt
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [showVoidConfirm, setShowVoidConfirm] = useState(false);
     const [showVoided, setShowVoided] = useState(false);
-    const [selectedDate, setSelectedDate] = useState('');
 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -184,18 +183,11 @@ export default function History({ transactions: serverTransactionsResponse, filt
     const handleDateChange = (e) => {
         const date = e.target.value;
         if (!date) return;
-        setSelectedDate(date);
         router.get('/pos/transactions', {
             filter: 'custom',
             start_date: date,
             end_date: date
         }, { preserveState: true });
-    };
-
-    const formatDateDisplay = (dateStr) => {
-        if (!dateStr) return null;
-        const [y, m, d] = dateStr.split('-');
-        return `${d}/${m}/${y}`;
     };
 
     return (
@@ -321,26 +313,12 @@ export default function History({ transactions: serverTransactionsResponse, filt
                         </button>
                         
                         <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-2xl px-3 py-0.5 shadow-sm">
-                            <FontAwesomeIcon icon={faCalendarCheck} className="text-[10px] text-brand/50 shrink-0" />
-                            <span className="text-[10px] font-manrope font-black text-slate-500 uppercase tracking-widest hidden md:inline whitespace-nowrap">Cari Tanggal:</span>
-                            <div className="relative">
-                                <input
-                                    id="history-date-picker"
-                                    type="date"
-                                    value={selectedDate}
-                                    onChange={handleDateChange}
-                                    className="bg-transparent border-none text-slate-700 text-xs focus:ring-0 font-manrope font-bold py-2 px-0 w-[130px] h-9 cursor-pointer"
-                                />
-                            </div>
-                            {selectedDate && (
-                                <button
-                                    type="button"
-                                    onClick={(e) => { e.stopPropagation(); setSelectedDate(''); router.get('/pos/transactions', { filter: 'daily' }, { preserveState: true }); }}
-                                    className="text-[8px] text-slate-400 hover:text-red-500 font-black uppercase tracking-widest transition-colors shrink-0"
-                                >
-                                    Reset
-                                </button>
-                            )}
+                            <span className="text-[9px] font-manrope font-black text-slate-400 uppercase tracking-widest hidden md:inline">Cari Tanggal:</span>
+                            <input
+                                type="date"
+                                onChange={handleDateChange}
+                                className="bg-transparent border-none text-slate-600 text-xs focus:ring-0 font-manrope font-bold py-2 px-1"
+                            />
                         </div>
                     </div>
 
